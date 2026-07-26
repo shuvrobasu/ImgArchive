@@ -6,6 +6,8 @@ ImgArchive Studio creates a custom .iarc archive format optimized for image fold
 <img width="1920" height="1040" alt="image" src="https://github.com/user-attachments/assets/fc1259b3-c3ca-4574-b6b1-9d3c6e122352" />
 <img width="1920" height="1040" alt="image" src="https://github.com/user-attachments/assets/990c82ad-0ed5-418e-bc70-93f7f20ea3d5" />
 
+<img width="1920" height="1040" alt="image" src="https://github.com/user-attachments/assets/4a60706c-47a9-4423-bccf-cce0fec7fff0" />
+
 
 It supports:
 - sequence-style archives for video frames or near-sequential images
