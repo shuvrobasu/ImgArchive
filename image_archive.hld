@@ -1,0 +1,538 @@
+# ImgArchive Studio Help {#top}
+
+[color:accent]Neural Keyframe Image Archive System v1.0[/color]
+[color:dim]Custom archive format for image sequences with AI-powered compression.[/color]
+
+---
+
+## Table of Contents {#toc}
+
+• [link:overview]Overview[/link]
+• [link:quick_start]Quick Start Guide[/link]
+• [link:archive_builder]Archive Builder[/link]
+• [link:archive_viewer]Archive Viewer[/link]
+• [link:export_video]Export to Video[/link]
+• [link:contact_sheet]Contact Sheet[/link]
+• [link:split_archive]Split Archive[/link]
+• [link:batch_builder]Batch Builder[/link]
+• [link:project_files]Project Files (.ias)[/link]
+• [link:models_settings]Models & Settings[/link]
+• [link:frame_types]Frame Types Explained[/link]
+• [link:keyboard_shortcuts]Keyboard Shortcuts[/link]
+• [link:archive_format]Archive Format (.iarc)[/link]
+• [link:compact_repair]Compact & Repair[/link]
+• [link:troubleshooting]Troubleshooting[/link]
+• [link:top]Back to Top[/link]
+
+---
+
+# Overview {#overview}
+
+ImgArchive Studio creates [b].iarc[/b] archive files from sequential image folders.
+
+Instead of storing every image, the system uses [color:accent]AI-powered compression[/color]:
+
+• [color:green]Keyframes[/color] — Full images stored as compressed WebP
+• [color:cyan]Interpolated[/color] — NOT stored. Reconstructed on-the-fly using RIFE
+• [color:yellow]Residual[/color] — RIFE reconstruction + stored correction patch
+• [color:accent]Forced Keyframe[/color] — Stored due to face/body/scene cut risk
+
+This typically achieves [b]70-90% reduction[/b] in disk space.
+
+[link:toc]↑ Back to Table of Contents[/link]
+
+---
+
+# Quick Start Guide {#quick_start}
+
+### Step 1: Select Source Folder
+Open the [b]Archive Builder[/b] tab. Click [color:cyan]Browse[/color] to select your image folder.
+
+### Step 2: Scan Folder
+Click [color:cyan]Scan[/color]. The app finds all supported images (PNG, JPG, WebP, BMP, TIFF).
+
+### Step 3: Configure Settings
+Adjust the build options on the right panel:
+• [b]Quality[/b] — WebP compression quality (50-100, default 92)
+• [b]GOP Size[/b] — Group of Pictures size (4-48, default 12)
+• [b]Similarity Threshold[/b] — How similar frames must be (0.80-0.99)
+
+### Step 4: Analyze Sequence
+Click [color:accent]🔍 Analyze Sequence[/color]. The fast 4-phase analyzer runs:
+
+[mono]
+Phase 1: Histogram scan      (~1ms/frame, all frames)
+Phase 2: Thumbnail SSIM      (~5ms/frame, uncertain only)
+Phase 3: AI face/body/motion  (~100ms/frame, risk frames only)
+Phase 4: Build compression plan
+[/mono]
+
+### Step 5: Review Results
+Check the analysis results panel. Review keyframe ratio and estimated savings.
+
+### Step 6: Build Archive
+Click [color:green]🔨 Build Archive[/color]. The .iarc file is created.
+
+### Step 7: View & Extract
+Switch to [b]Archive Viewer[/b] tab. Open the archive. Browse, decode, and extract frames.
+
+[link:toc]↑ Back to Table of Contents[/link]
+
+---
+
+# Archive Builder {#archive_builder}
+
+## Source & Output
+
+• [b]Source Folder[/b] — Folder containing sequential images
+• [b]Output Archive[/b] — Path for the .iarc file (auto-suggested)
+
+## Build Options
+
+### Compression
+• [b]Codec[/b] — WebP Lossy (recommended) or JPEG
+• [b]Quality[/b] — 50-100. Higher = better quality, larger file
+• [b]Chroma[/b] — Subsampling mode (4:2:0 default)
+
+### Sequence Handling
+• [b]GOP Size[/b] — Frames between keyframes. Smaller = more keyframes, better quality
+• [b]Similarity Threshold[/b] — SSIM threshold. Frames below this become keyframes
+
+### AI Analysis Toggles
+• [color:green]Face-Safe Mode[/color] — Detect faces, prevent quality loss on facial regions
+• [color:green]Body-Safe Mode[/color] — Detect human bodies, preserve limb transitions
+• [color:green]Keep Residuals[/color] — Store correction patches for risky interpolations
+• [color:green]Scene Cut Detection[/color] — Detect hard cuts using histogram analysis
+• [color:green]Optical Flow (RAFT)[/color] — Use RAFT for motion scoring
+• [color:green]Identity Check[/color] — Verify face identity consistency across GOPs
+• [color:dim]Archive Downscale[/color] — Store at reduced resolution (optional)
+• [color:dim]Depth-Aware[/color] — Use Depth Anything for guided compression (optional)
+
+### Compression Modes
+• [b]Max Compression[/b] — Smallest file, more GPU on extract
+• [b]Balanced[/b] — Good compression with fast extraction (recommended)
+• [b]Fast Access[/b] — Larger file, minimal decode cost
+
+[link:toc]↑ Back to Table of Contents[/link]
+
+---
+
+# Archive Viewer {#archive_viewer}
+
+## Opening an Archive
+• Click [color:cyan]📁 Open Archive[/color] in the toolbar
+• Or use [b]Ctrl+O[/b]
+• Or select from [b]File → Recent Archives[/b]
+
+## Frame List
+The left panel shows all frames with:
+• [b]Index[/b] — Frame number
+• [b]Name[/b] — Original filename
+• [b]Type[/b] — K (Keyframe), I (Interpolated), R (Residual), C (Forced), D (Deleted)
+• [b]Size[/b] — Stored data size
+• [b]Scores[/b] — Similarity, face, and body scores
+
+## Search & Filter
+• [b]Search[/b] — Find frames by name or index
+• [b]Filter[/b] — Show only specific frame types
+• [b]Go to[/b] — Jump to a specific frame index
+
+## Preview
+• Click a frame to see its metadata
+• Double-click or press [b]Space[/b] to decode and preview
+• Use [b]Left/Right arrows[/b] to navigate
+• Scroll to zoom, drag to pan, double-click to fit
+
+## Extraction
+• [color:yellow]Extract Selected[/color] — Save selected frame(s) to disk
+• [color:yellow]Extract Range[/color] — Extract a range of frames by index
+• [color:yellow]Extract All[/color] — Extract all frames to a folder
+• [color:cyan]Export KFs Only[/color] — Fast export of keyframes only (no GPU needed)
+
+## Frame Management
+• [color:red]Delete Selected[/color] — Mark frame(s) as deleted (logical, reversible)
+• [color:green]Restore[/color] — Undo deletion
+• [color:accent]Compact Archive[/color] — Permanently remove deleted frames
+• [color:red]Repair Archive[/color] — Fix corrupted data and broken references
+
+[link:toc]↑ Back to Table of Contents[/link]
+
+---
+
+# Export to Video {#export_video}
+
+Export the archive as a video file with optional audio.
+
+## Requirements
+• [b]ffmpeg[/b] must be in your system PATH
+
+## Settings
+• [b]Output format[/b] — MP4, WebM, AVI, MKV
+• [b]FPS[/b] — 24, 29, 30, or 60 frames per second
+• [b]Quality (CRF)[/b] — Lower = better quality (18-28 typical)
+• [b]Audio file[/b] — Optional MP3/WAV/AAC/M4A/OGG to mux with video
+
+## How It Works
+[mono]
+1. Each frame is decoded on-the-fly (GPU for interpolated frames)
+2. Raw BGR frames are piped to ffmpeg via stdin
+3. ffmpeg encodes to the selected format
+4. If audio is selected, it is muxed with -shortest flag
+[/mono]
+
+## Access
+• Menu: [b]Export → Export to Video...[/b]
+• Shortcut: [b]Ctrl+Shift+V[/b]
+
+[link:toc]↑ Back to Table of Contents[/link]
+
+---
+
+# Contact Sheet {#contact_sheet}
+
+Generate a single thumbnail grid image showing every Nth frame.
+
+## Settings
+• [b]Every Nth frame[/b] — e.g., 100 = every 100th frame (default)
+• [b]Thumbnail size[/b] — Width/height in pixels (default 128)
+• [b]Show labels[/b] — Draw frame index below each thumbnail
+
+## Example
+For a 45,000 frame archive with N=100:
+• 450 thumbnails in a grid
+• At 128px each, approximately 3000x2000 pixel output image
+
+## Access
+• Menu: [b]Export → Generate Contact Sheet...[/b]
+• Shortcut: [b]Ctrl+Shift+C[/b]
+
+[link:toc]↑ Back to Table of Contents[/link]
+
+---
+
+# Split Archive {#split_archive}
+
+Split a large archive into smaller parts.
+
+## Split by Frame Range
+• Specify frames per part (e.g., 5000)
+• Output: [b]basename.iar001[/b], [b]basename.iar002[/b], etc.
+
+## Split by GOP Boundaries
+• Specify GOPs per part (e.g., 50)
+• Splits at GOP boundaries to maintain clean keyframe references
+• Output: same .iar001, .iar002 naming
+
+## Important Notes
+• Maximum 999 parts
+• Frames at split boundaries with parents in other parts are promoted to keyframes
+• Each part is a fully independent .iarc-compatible archive
+
+## Access
+• Menu: [b]Export → Split Archive (by range/GOP)...[/b]
+
+[link:toc]↑ Back to Table of Contents[/link]
+
+---
+
+# Batch Builder {#batch_builder}
+
+Build multiple archives from multiple folders in one session.
+
+## How to Use
+1. Open: [b]Tools → Batch Archive Builder...[/b]
+2. Click [color:cyan]Add Folder[/color] to queue source folders
+3. Each folder auto-gets an output .iarc path
+4. Click [color:green]Build All[/color] to process sequentially
+5. All folders use the current analysis settings
+
+## Notes
+• A .ias project file is auto-saved alongside each archive
+• Each completed archive is added to Recent Files
+• Progress shows per-folder status
+• Can be cancelled between folders
+
+[link:toc]↑ Back to Table of Contents[/link]
+
+---
+
+# Project Files (.ias) {#project_files}
+
+A [b].ias[/b] project file stores the session state for an archive.
+
+## What is Stored
+• Source folder path
+• Archive file path
+• Audio file path (for video export)
+• All build settings (quality, GOP, thresholds, toggles)
+• Export settings (FPS, format)
+• Contact sheet settings
+• Bookmarks and tags
+• Creation and modification timestamps
+
+## Automatic Behavior
+• When you build an archive, a .ias file is auto-created alongside it
+• When you open a .iarc file, the app looks for a matching .ias and auto-loads it
+• Settings from the .ias override current app settings for that archive
+
+## Manual Save/Load
+• [b]File → Save Project[/b] (Ctrl+S)
+• [b]File → Open Project (.ias)...[/b] (Ctrl+Shift+O)
+
+## File Format
+Plain JSON with .ias extension. Human-readable and editable.
+
+[link:toc]↑ Back to Table of Contents[/link]
+
+---
+
+# Models & Settings {#models_settings}
+
+## RIFE (Frame Interpolation)
+Used for on-the-fly frame reconstruction during extraction.
+• [b]Model Directory[/b] — Contains RIFE model files
+• GPU/CUDA required for acceptable speed
+• FP16 recommended (faster, less VRAM)
+
+## RAFT (Optical Flow)
+Used during analysis for motion scoring.
+• [b]Variants[/b] — things (recommended), chairs, kitti, sintel, small
+• Runs on GPU
+
+## TransNetV2 (Scene Cut Detection)
+Detects hard scene cuts in the image sequence.
+• Falls back to histogram comparison if model unavailable
+
+## Face Analysis
+• [b]InsightFace[/b] — Face detection and landmarks
+• [b]BiSeNet (79999_iter.pth)[/b] — Face region parsing
+• [b]ArcFace (w600k_r50.onnx)[/b] — Identity consistency checking
+
+## Body Analysis
+• [b]YOLO11x-Seg[/b] — Human segmentation
+• [b]YOLO11x-Pose[/b] — Body keypoint detection
+• [b]DeepLabV3+[/b] — Lightweight human segmentation (fallback)
+
+## Optional Models
+• [b]Depth Anything V2[/b] — Depth-guided compression (toggle)
+• [b]RealESRGAN / SwinIR[/b] — Post-decode upscaling (toggle)
+• [b]GFPGAN[/b] — Face enhancement (toggle, preview/extraction/both)
+
+## Device Settings
+• [b]Device[/b] — CUDA (default) or CPU
+• [b]Precision[/b] — FP16 (default) or FP32
+• [b]Batch Size[/b] — Decode batch size (1 default)
+
+[link:toc]↑ Back to Table of Contents[/link]
+
+---
+
+# Frame Types Explained {#frame_types}
+
+[mono]
+Type   Label   Color    Storage            Decode Method
+-----  -----   ------   -------            -------------
+K      Green   Stored   WebP decode        Direct
+I      Blue    None     RIFE interpolation Parent KFs → RIFE
+R      Orange  Patch    RIFE + residual    RIFE → add patch
+C      Purple  Stored   WebP decode        Direct (forced)
+D      Red     N/A      Skipped            Error/skip
+[/mono]
+
+### Keyframe (K)
+Full image stored as compressed WebP. Decoded directly. These are the "anchor" frames.
+
+### Interpolated (I)
+[color:cyan]NOT stored[/color]. Reconstructed by running RIFE on the two nearest parent keyframes. Uses GPU.
+
+### Residual (R)
+Reconstructed by RIFE, then a small [color:yellow]correction patch[/color] is added. Used when RIFE alone would lose face/body detail.
+
+### Forced Keyframe (C)
+Stored as full image, [color:accent]forced[/color] because:
+• Scene cut detected
+• Face quality would degrade
+• Body motion too large
+• Identity changed between frames
+
+### Deleted (D)
+Logically removed. Data still exists in archive until compacted.
+
+[link:toc]↑ Back to Table of Contents[/link]
+
+---
+
+# Keyboard Shortcuts {#keyboard_shortcuts}
+
+## Navigation (Viewer Tab active)
+[mono]
+Left Arrow      Previous frame + decode
+Right Arrow     Next frame + decode
+Space           Decode current frame
+Home            Go to first frame
+End             Go to last frame
+[/mono]
+
+## Actions
+[mono]
+Ctrl+O          Open archive
+Ctrl+N          New archive from folder
+Ctrl+S          Save project
+Ctrl+E          Extract selected frame
+Ctrl+Shift+O    Open project (.ias)
+Ctrl+Shift+V    Export to video
+Ctrl+Shift+C    Generate contact sheet
+Delete          Delete selected frame
+F1              Open this help
+F5              Reload archive
+F11             Toggle fullscreen
+[/mono]
+
+[link:toc]↑ Back to Table of Contents[/link]
+
+---
+
+# Archive Format (.iarc) {#archive_format}
+
+## File Structure
+[mono]
+┌─────────────────────────────────┐
+│ MAGIC "IARC" (4 bytes)          │
+│ VERSION (4 bytes, uint32)       │
+│ HEADER_JSON_SIZE (8 bytes)      │
+│ INDEX_JSON_SIZE (8 bytes)       │
+├─────────────────────────────────┤
+│ HEADER JSON (variable)          │
+│   total_frames, codec, quality  │
+│   dimensions, thresholds, etc.  │
+├─────────────────────────────────┤
+│ INDEX JSON (array of frames)    │
+│   index, name, type, offsets    │
+│   parents, timestep, scores     │
+├─────────────────────────────────┤
+│ DATA BLOCKS (sequential)        │
+│   WebP keyframe blobs           │
+│   WebP residual blobs           │
+├─────────────────────────────────┤
+│ FOOTER CHECKSUM (64 bytes)      │
+│   SHA256 of everything above    │
+└─────────────────────────────────┘
+[/mono]
+
+## Random Access
+To read frame N:
+1. Parse index from header
+2. Look up frame N's offset and size
+3. Seek directly to data offset
+4. Read and decode
+
+No need to read the entire file.
+
+## Reconstruction Algorithm
+[mono]
+If KEYFRAME:     seek → read → decode WebP
+If INTERPOLATED: get parent A + B → RIFE(A, B, timestep)
+If RESIDUAL:     RIFE(A, B, t) → add stored residual patch
+If DELETED:      skip / error
+[/mono]
+
+[link:toc]↑ Back to Table of Contents[/link]
+
+---
+
+# Compact & Repair {#compact_repair}
+
+## Compact Archive
+[b]What it does:[/b]
+• Removes all deleted frames permanently
+• Rebuilds a clean, contiguous archive
+• Remaps all frame indices and parent references
+• Creates a backup before modifying
+
+[b]When to use:[/b]
+• After deleting many frames
+• To reduce file size
+• Before sharing an archive
+
+## Repair Archive
+[b]What it does:[/b]
+• Validates every stored keyframe blob (decode test)
+• Validates every residual blob
+• Checks parent references for all interpolated frames
+• Fixes orphaned frames (missing parents)
+• Demotes corrupted keyframes to interpolated
+• Promotes orphaned frames to keyframes when possible
+• Rebuilds index and compacts
+
+[b]What it reports:[/b]
+[mono]
+Corrupted keyframes:      count
+Corrupted residuals:      count
+Orphaned frames:          count
+Fixed frames:             count
+Promoted to keyframe:     count
+Demoted to interpolated:  count
+Unrecoverable:            count
+[/mono]
+
+[link:toc]↑ Back to Table of Contents[/link]
+
+---
+
+# Troubleshooting {#troubleshooting}
+
+## RIFE model fails to load
+[color:yellow]Check:[/color]
+• RIFE model directory path is correct in Settings
+• Directory contains model files (flownet.pkl or similar)
+• Use [b]Test RIFE[/b] button in Settings tab
+
+## All frames shown as keyframes
+[color:yellow]Check:[/color]
+• Similarity threshold — try lowering to 0.85
+• GOP size — try increasing to 16 or 24
+• Ensure source images are actually sequential and similar
+
+## Analysis takes too long
+The fast analyzer should process 45k frames in 4-6 minutes.
+If it takes longer:
+• Disable Optical Flow (RAFT) — saves significant time
+• Disable Identity Check — reduces AI phase
+• Ensure GPU is being used (check GPU status indicator)
+
+## FP16 type mismatch error
+[color:red]RuntimeError: Input type Half and bias type float[/color]
+The RIFE model must be fully converted to FP16. This is handled automatically. If you see this error:
+• Go to Settings → GPU Precision → select FP32
+• Or update to the latest RIFE model files
+
+## CPU at 100% during analysis
+• ONNX sessions may be using CPU — check Settings for CUDA device
+• Reduce ONNX thread count in Settings
+• Ensure onnxruntime-gpu is installed (not onnxruntime)
+
+## Archive won't open
+[color:yellow]Check:[/color]
+• File is not corrupted — try Verify
+• File has .iarc extension
+• File starts with "IARC" magic bytes
+• Try Repair if verification fails
+
+## Video export fails
+• Ensure ffmpeg is in your system PATH
+• Try: [b]ffmpeg -version[/b] in command prompt
+• Check output path is writable
+• Ensure archive is open and has frames
+
+## Tooltips appearing randomly
+This was a known issue that has been fixed. If tooltips still misbehave:
+• Only one tooltip should ever appear at a time
+• Tooltips auto-hide after 8 seconds
+• Moving the mouse hides the current tooltip
+
+[link:toc]↑ Back to Table of Contents[/link]
+
+---
+
+[color:dim]ImgArchive Studio v1.0 — Neural Keyframe Image Archive System[/color]
+[color:dim]GPU accelerated • Face-safe • Body-safe • 100k+ frame support[/color]
